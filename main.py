@@ -1,24 +1,25 @@
 from flask import Flask, request, jsonify
 from promptifypro_engine import upgrade_prompt
-from dotenv import load_dotenv
 import os
 
-load_dotenv()
 app = Flask(__name__)
 
 @app.route("/generate", methods=["POST"])
 def generate():
-    data = request.get_json()
-    basic_prompt = data.get("prompt", "")
-    if not basic_prompt:
-        return jsonify({"error": "No prompt provided"}), 400
+    try:
+        data = request.get_json()
+        basic_prompt = data.get("prompt", "")
+        if not basic_prompt:
+            return jsonify({"error": "No prompt provided"}), 400
 
-    upgraded = upgrade_prompt(basic_prompt)
-    return jsonify({"upgraded_prompt": upgraded})
+        upgraded_prompt = upgrade_prompt(basic_prompt)
+        return jsonify({"upgraded_prompt": upgraded_prompt})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
-@app.route("/")
+@app.route("/", methods=["GET"])
 def home():
     return "Promptify Pro Backend is Running!"
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+    app.run(host="0.0.0.0", port=8080)
