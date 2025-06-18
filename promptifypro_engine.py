@@ -1,14 +1,16 @@
 import openai
-import os
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+client = openai.OpenAI()
 
 def upgrade_prompt(prompt):
-    response = openai.ChatCompletion.create(
+    response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "You are a professional prompt engineer. Improve the following prompt to make it highly effective, creative, and specific."},
+            {"role": "system", "content": "You are a professional prompt engineer. Upgrade this prompt to make it highly effective."},
             {"role": "user", "content": prompt}
-        ]
+        ],
+        max_tokens=500
     )
-    return response['choices'][0]['message']['content']
+
+    upgraded_prompt = response.choices[0].message.content
+    return upgraded_prompt
